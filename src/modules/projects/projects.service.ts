@@ -33,11 +33,11 @@ export class ProjectsService {
     })
   }
 
-  remove(id: string) {
-    return this.prisma.project.delete({
-      where: {
-        id,
-      },
+  async remove(id: string) {
+    await this.prisma.task.deleteMany({ where: { projectId: id } })
+
+    return await this.prisma.project.delete({
+      where: { id },
     })
   }
 }
