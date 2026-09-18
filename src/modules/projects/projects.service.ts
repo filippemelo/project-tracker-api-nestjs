@@ -12,8 +12,25 @@ export class ProjectsService {
 
   findById(id: string) {
     return this.prisma.project.findFirst({
-      where: {
-        id: id,
+      where: { id: id },
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        createdAt: true,
+        updateAt: true,
+        tasks: {
+          select: {
+            id: true,
+            title: true,
+            description: true,
+            status: true,
+            priority: true,
+            dueDate: true,
+            createdAt: true,
+            updateAt: true,
+          },
+        },
       },
     })
   }
