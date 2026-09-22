@@ -1,4 +1,5 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common'
+import { CollaboratorRole } from '@prisma/client'
 import { PrismaService } from '../../prisma.service.js'
 import { AddCollaboratorDTO, UpdateCollaboratorDTO } from './collaborators.dto.js'
 
@@ -73,6 +74,10 @@ export class CollaboratorsService {
 
     if (!collaborator) {
       throw new NotFoundException('Collaborator not found in this project.')
+    }
+
+    if (collaborator.role === CollaboratorRole.OWNER) {
+      throw new BadRequestException("The project owner can't be remove")
     }
 
     await this.prisma.projectCollaborator.delete({
