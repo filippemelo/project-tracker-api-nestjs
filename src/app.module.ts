@@ -8,11 +8,12 @@ import { UsersModule } from './modules/users/users.module.js'
 import { PrismaService } from './prisma.service.js'
 import { CollaboratorsModule } from './modules/collaborators/collaborators.module.js';
 import { CommentsModule } from './modules/comments/comments.module.js';
+import { AuthModule } from './modules/auth/auth.module.js';
 
 export const { ObserveModule, ObserveInstrument } = createObserveModule()
 
 @Module({
-  imports: [ProjectsModule, TasksModule, UsersModule, CollaboratorsModule, CommentsModule],
+  imports: [ProjectsModule, TasksModule, UsersModule, CollaboratorsModule, CommentsModule, AuthModule],
   controllers: [AppController],
   providers: [AppService, PrismaService],
 })
