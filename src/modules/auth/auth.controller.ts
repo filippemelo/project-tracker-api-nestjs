@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Post, UseGuards } from '@nestjs/common'
+import { Body, Controller, Get, HttpCode, HttpStatus, Post, Req, UseGuards } from '@nestjs/common'
 import { AuthGuard } from '@nestjs/passport'
 import { UsersService } from '../users/users.service.js'
 import { SignInDTO, SignUpDTO } from './auth.dto.js'
@@ -27,7 +27,7 @@ export class AuthController {
 
   @Get('protected')
   @UseGuards(AuthGuard('jwt'))
-  protected() {
+  protected(@Req() req: any) {
     return {
       message: 'Authenticated!',
     }
