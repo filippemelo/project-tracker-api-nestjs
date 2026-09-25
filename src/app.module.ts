@@ -6,6 +6,7 @@ import { RequestContextService } from './common/services/request-context/request
 import { AuthModule } from './modules/auth/auth.module.js'
 import { CollaboratorsModule } from './modules/collaborators/collaborators.module.js'
 import { CommentsModule } from './modules/comments/comments.module.js'
+import { MailModule } from './modules/mail/mail.module.js'
 import { ProjectsModule } from './modules/projects/projects.module.js'
 import { TasksModule } from './modules/tasks/tasks.module.js'
 import { UsersModule } from './modules/users/users.module.js'
@@ -21,6 +22,7 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule()
     CollaboratorsModule,
     CommentsModule,
     AuthModule,
+    MailModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService, RequestContextService],
