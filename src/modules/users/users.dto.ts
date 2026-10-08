@@ -33,7 +33,9 @@ export class UpdateUserDTO {
   @ApiProperty({ description: 'User role', enum: Role, default: Role.ADMIN, required: false })
   @IsEnum(Role)
   @IsOptional()
-  role?: Role = Role.ADMIN
+  role?: Role
+
+  avatar?: string
 }
 
 export class UserListItemDTO {

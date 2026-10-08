@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common'
 import { createObserveModule } from '@nestjs/observe'
 import { AppController } from './app.controller.js'
 import { AppService } from './app.service.js'
+import { CloudinaryService } from './common/services/cloudinary/cloudinary.service.js'
 import { AuthModule } from './modules/auth/auth.module.js'
 import { CollaboratorsModule } from './modules/collaborators/collaborators.module.js'
 import { CommentsModule } from './modules/comments/comments.module.js'
@@ -24,6 +25,6 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule()
     MailModule,
   ],
   controllers: [AppController],
-  providers: [AppService, PrismaService],
+  providers: [AppService, PrismaService, CloudinaryService],
 })
 export class AppModule {}

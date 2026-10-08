@@ -1,7 +1,9 @@
-import { ValidateResoursesIdsInterceptor } from '../../modules/validate-resourses-ids/validate-resourses-ids.interceptor.js'
+import { Reflector } from '@nestjs/core'
+import { PrismaService } from '../../prisma.service.js'
+import { ValidateResoursesIdsInterceptor } from './validate-resourses-ids.interceptor.js'
 
 describe('ValidateResoursesIdsInterceptor', () => {
   it('should be defined', () => {
-    expect(new ValidateResoursesIdsInterceptor()).toBeDefined()
+    expect(new ValidateResoursesIdsInterceptor(new Reflector(), new PrismaService())).toBeDefined()
   })
 })
