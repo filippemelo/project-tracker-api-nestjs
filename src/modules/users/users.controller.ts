@@ -10,15 +10,18 @@ import {
   ParseUUIDPipe,
   Post,
   Put,
+  Query,
   UploadedFile,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common'
 import { FileInterceptor } from '@nestjs/platform-express'
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiResponse } from '@nestjs/swagger'
+import { QueryPaginationDTO } from '../../common/dtos/query-pagination.dto.js'
 import { JwtAuthGuard } from '../../common/guards/jwt-auth/jwt-auth.guard.js'
 import { CloudinaryService } from '../../common/services/cloudinary/cloudinary.service.js'
 import { RequestContextService } from '../../common/services/request-context/request-context.service.js'
+import { ApiPaginatedResponse } from '../../common/swagger/api-paginated-response.js'
 import { CreateUserDTO, UpdateUserDTO, UserFullDTO, UserListItemDTO } from './users.dto.js'
 import { UsersService } from './users.service.js'
 
@@ -36,9 +39,9 @@ export class UsersController {
   ) {}
 
   @Get()
-  @ApiResponse({ type: [UserListItemDTO] })
-  findAll() {
-    return this.userService.findAll()
+  @ApiPaginatedResponse(UserListItemDTO)
+  findAll(@Query() query?: QueryPaginationDTO) {
+    return this.userService.findAll(query)
   }
 
   @Get(':userId')
