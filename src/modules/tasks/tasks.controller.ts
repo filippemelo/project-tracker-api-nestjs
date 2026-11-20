@@ -9,14 +9,22 @@ import {
   ParseUUIDPipe,
   Post,
   Put,
+  Query,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common'
-import { ApiBearerAuth } from '@nestjs/swagger'
+import {
+  ApiBearerAuth,
+  ApiCreatedResponse,
+  ApiNoContentResponse,
+  ApiOkResponse,
+} from '@nestjs/swagger'
 import { ValidateResourcesIds } from '../../common/decorators/validate-resourses-ids.decorator.js'
+import { QueryPaginationDTO } from '../../common/dtos/query-pagination.dto.js'
 import { JwtAuthGuard } from '../../common/guards/jwt-auth/jwt-auth.guard.js'
 import { ValidateResoursesIdsInterceptor } from '../../common/interceptors/validate-resourses-ids.interceptor.js'
-import { TaskDTO } from './tasks.dto.js'
+import { ApiPaginatedResponse } from '../../common/swagger/api-paginated-response.js'
+import { TaskListItemDTO, TaskRequestDTO } from './tasks.dto.js'
 import { TasksService } from './tasks.service.js'
 
 @Controller({
@@ -31,13 +39,19 @@ export class TasksController {
 
   @Get()
   @ValidateResourcesIds()
-  findAllByProject(@Param('projectId', ParseUUIDPipe) projectId: string) {
-    return this.tasksService.findAllByProject(projectId)
+  @ApiPaginatedResponse(TaskListItemDTO)
+  findAllByProject(
+    @Param('projectId', ParseUUIDPipe) projectId: string,
+    @Query() query?: QueryPaginationDTO,
+  ) {
+    return this.tasksService.findAllByProject(projectId, query)
   }
 
   @Post()
   @ValidateResourcesIds()
-  create(@Param('projectId', ParseUUIDPipe) projectId: string, @Body() data: TaskDTO) {
+  @ApiCreatedResponse({ type: TaskListItemDTO })
+  @HttpCode(HttpStatus.CREATED)
+  create(@Param('projectId', ParseUUIDPipe) projectId: string, @Body() data: TaskRequestDTO) {
     return this.tasksService.create(projectId, data)
   }
 
@@ -52,17 +66,20 @@ export class TasksController {
 
   @Put(':taskId')
   @ValidateResourcesIds()
+  @ApiOkResponse({ type: TaskListItemDTO })
+  @HttpCode(HttpStatus.OK)
   update(
     @Param('projectId', ParseUUIDPipe) projectId: string,
     @Param('taskId', ParseUUIDPipe) taskId: string,
-    @Body() data: TaskDTO,
+    @Body() data: TaskRequestDTO,
   ) {
     return this.tasksService.update(projectId, taskId, data)
   }
 
   @Delete(':taskId')
-  @HttpCode(HttpStatus.NO_CONTENT)
   @ValidateResourcesIds()
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiNoContentResponse({ description: 'Task deleted successfully' })
   remove(
     @Param('projectId', ParseUUIDPipe) projectId: string,
     @Param('taskId', ParseUUIDPipe) taskId: string,

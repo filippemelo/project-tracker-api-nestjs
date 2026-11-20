@@ -34,7 +34,7 @@ model Project {
   name String
   description String?
   createdAt DateTime @default(now())
-  updateAt DateTime @updatedAt
+  updatedAt DateTime @updatedAt
   createdById String
 
   tasks Task[]
@@ -81,7 +81,7 @@ model Task {
   priority TaskPriority @default(MEDIUM)
   dueDate DateTime?
   createdAt DateTime @default(now())
-  updateAt DateTime @updatedAt
+  updatedAt DateTime @updatedAt
   projectId String
   assigneeId String?
 
