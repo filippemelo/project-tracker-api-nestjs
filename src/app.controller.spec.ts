@@ -14,9 +14,11 @@ describe('AppController', () => {
     appController = app.get<AppController>(AppController)
   })
 
-  describe('root', () => {
-    it('should return the health check message', () => {
-      expect(appController.getHealthCheck()).toEqual({ message: 'API is running' })
+  describe('HealthCheck', () => {
+    it('should return "API is running!"', () => {
+      expect(appController.getHealthCheck()).toEqual({
+        message: 'API is running!',
+      })
     })
   })
 })
