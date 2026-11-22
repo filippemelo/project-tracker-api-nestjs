@@ -78,6 +78,9 @@ importers:
       '@biomejs/biome':
         specifier: ^2.5.14
         version: 2.5.14
+      '@faker-js/faker':
+        specifier: ^9.9.0
+        version: 9.9.0
       '@nestjs/cli':
         specifier: ^12.0.0
         version: 12.0.3(@types/node@24.13.5)(prettier@3.9.7)
@@ -469,6 +472,10 @@ packages:
   '@css-inline/css-inline@0.20.0':
     resolution: {integrity: sha512-WABsvMSBs/DDadwhAUDw6uXwUE6w4DC/bnC4E2Y2rqbCTw5E1PPfj6VksnSCALkv9ynZfYGYYO4+Rvhmn5kgpw==}
     engines: {node: '>= 10'}
+
+  '@faker-js/faker@9.9.0':
+    resolution: {integrity: sha512-OEl393iCOoo/z8bMezRlJu+GlRGlsKbUAN7jKB6LhnKoqKve5DXRpalbItIIcwnCjs1k/FOPjFzcA6Qn+H+YbA==}
+    engines: {node: '>=18.0.0', npm: '>=9.0.0'}
 
   '@inquirer/ansi@2.0.8':
     resolution: {integrity: sha512-WpQM+Ti6Z40EFwwt+uL2p4UabT+W179zHp6HhLVOzfbwnVn05IPO/eXIZXGNqcT1jbQ15SujNLzQ39k4QPPxBQ==}
@@ -4305,6 +4312,8 @@ snapshots:
       '@css-inline/css-inline-linux-x64-musl': 0.20.0
       '@css-inline/css-inline-win32-arm64-msvc': 0.20.0
       '@css-inline/css-inline-win32-x64-msvc': 0.20.0
+
+  '@faker-js/faker@9.9.0': {}
 
   '@inquirer/ansi@2.0.8': {}
 
