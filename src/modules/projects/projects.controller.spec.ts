@@ -1,18 +1,47 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { ProjectsController } from './projects.controller.js';
+import { Test, TestingModule } from '@nestjs/testing'
+import { Project } from '@prisma/client'
+import { RequestContextService } from '../../common/services/request-context/request-context.service.js'
+import { PrismaService } from '../../prisma.service.js'
+import { paginateOutput } from '../../utils/pagination.utils.js'
+import { ProjectsController } from './projects.controller.js'
+import { mockedProjects, mockPaginationQuery } from './projects.mocks.js'
+import { ProjectsModule } from './projects.module.js'
+import { ProjectsService } from './projects.service.js'
 
 describe('ProjectsController', () => {
-  let controller: ProjectsController;
+  let controller: ProjectsController
+  let service: ProjectsService
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      controllers: [ProjectsController],
-    }).compile();
+      imports: [ProjectsModule],
+    })
+      .overrideProvider(ProjectsService)
+      .useValue(service)
+      .overrideProvider(PrismaService)
+      .useValue({ $connect: jest.fn() })
+      .overrideProvider(RequestContextService)
+      .useValue({ getUserId: jest.fn().mockReturnValue('user-1') })
+      .compile()
 
-    controller = module.get<ProjectsController>(ProjectsController);
-  });
+    controller = module.get<ProjectsController>(ProjectsController)
+    service = module.get<ProjectsService>(ProjectsService)
+  })
 
-  it('should be defined', () => {
-    expect(controller).toBeDefined();
-  });
-});
+  describe('findAll', () => {
+    it('should return a paginated list of projects', async () => {
+      const mockedResponse = paginateOutput<Project>(
+        mockedProjects,
+        mockedProjects.length,
+        mockPaginationQuery,
+      )
+
+      jest.spyOn(service, 'findAll').mockResolvedValue(mockedResponse)
+
+      const response = await controller.findAll()
+
+      expect(response).toEqual(mockedResponse)
+      expect(service.findAll).toHaveBeenCalledTimes(1)
+    })
+  })
+})
