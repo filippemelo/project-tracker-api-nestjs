@@ -1,4 +1,17 @@
-import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common'
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Post,
+  UnauthorizedException,
+  UseGuards,
+} from '@nestjs/common'
+import { ApiBearerAuth } from '@nestjs/swagger'
+import { type User } from '@prisma/client'
+import { AuthenticatedUser } from '../../common/decorators/authenticated-user.decorator.js'
+import { JwtAuthGuard } from '../../common/guards/jwt-auth/jwt-auth.guard.js'
 import { UsersService } from '../users/users.service.js'
 import { ForgotPasswordDTO, ResetPasswordDTO, SignInDTO, SignUpDTO } from './auth.dto.js'
 import { AuthService } from './auth.service.js'
@@ -10,7 +23,7 @@ import { AuthService } from './auth.service.js'
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
-    private readonly usersService: UsersService,
+    private readonly userService: UsersService,
   ) {}
 
   @Post('signup')
@@ -22,6 +35,26 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   signin(@Body() data: SignInDTO) {
     return this.authService.signin(data)
+  }
+
+  @Get('me')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('jwt')
+  async me(@AuthenticatedUser() user: User) {
+    const userData = await this.userService.findById(user.id)
+
+    if (!userData) {
+      throw new UnauthorizedException('User not found')
+    }
+
+    return {
+      id: userData.id,
+      name: userData.name,
+      avatar: userData.avatar,
+      email: userData.email,
+      createdAt: userData.createdAt,
+      updatedAt: userData.updatedAt,
+    }
   }
 
   @Post('forgot-password')
