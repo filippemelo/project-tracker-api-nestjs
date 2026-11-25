@@ -10,7 +10,7 @@ import {
   UseGuards,
 } from '@nestjs/common'
 import { ApiBearerAuth } from '@nestjs/swagger'
-import { type User } from '@prisma/client'
+import { type User } from '@prisma-generate/client.js'
 import { AuthenticatedUser } from '../../common/decorators/authenticated-user.decorator.js'
 import { JwtAuthGuard } from '../../common/guards/jwt-auth/jwt-auth.guard.js'
 import { UsersService } from '../users/users.service.js'

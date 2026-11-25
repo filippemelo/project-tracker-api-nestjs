@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { CollaboratorRole, Project } from '@prisma/client'
+import { CollaboratorRole, Project } from '@prisma-generate/client.js'
 import { QueryPaginationDTO } from '../../common/dtos/query-pagination.dto.js'
 import { RequestContextService } from '../../common/services/request-context/request-context.service.js'
 import { PrismaService } from '../../prisma.service.js'

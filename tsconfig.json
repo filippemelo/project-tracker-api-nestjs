@@ -18,6 +18,9 @@
     "skipLibCheck": true,
     "strict": true,
     "strictPropertyInitialization": false,
-    "types": ["jest", "node", "multer"]
+    "types": ["jest", "node", "multer"],
+    "paths": {
+      "@prisma-generate/*": ["./src/generated/prisma/*"]
+    }
   }
 }

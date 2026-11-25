@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { Role } from '@prisma/client'
+import { Role } from '@prisma-generate/client.js'
 import { IsEmail, IsEnum, IsNotEmpty, IsOptional, IsString, MinLength } from 'class-validator'
 
 export class SignUpDTO {

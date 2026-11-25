@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing'
-import { Comment } from '@prisma/client'
+import { Comment } from '@prisma-generate/client.js'
 import { RequestContextService } from '../../common/services/request-context/request-context.service.js'
 import { PrismaService } from '../../prisma.service.js'
 import { paginateOutput } from '../../utils/pagination.utils.js'

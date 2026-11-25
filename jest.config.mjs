@@ -5,6 +5,7 @@ export default {
   testRegex: '.*\\.spec\\.ts$',
   extensionsToTreatAsEsm: ['.ts'],
   moduleNameMapper: {
+    '^@prisma-generate/(.*)\\.js$': '<rootDir>/src/generated/prisma/$1',
     '^(\\.{1,2}/.*)\\.js$': '$1',
   },
     transform: {
