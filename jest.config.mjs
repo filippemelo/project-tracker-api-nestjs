@@ -1,6 +1,7 @@
 export default {
   rootDir: '.',
   testEnvironment: 'node',
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
   testRegex: '.*\\.spec\\.ts$',
   extensionsToTreatAsEsm: ['.ts'],
   moduleNameMapper: {
