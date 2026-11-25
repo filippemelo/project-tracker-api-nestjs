@@ -1,118 +1,158 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Project Tracker API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+API REST de gerenciamento de projetos e tarefas, construída com NestJS durante meus estudos do framework.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+Permite criar projetos, distribuir tarefas entre colaboradores, comentar nas tarefas e controlar o acesso por papel. Inclui autenticação JWT, recuperação de senha por e-mail em fila e upload de avatar.
 
-## Description
+## Stack
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+- **NestJS 12** + **TypeScript** (ESM)
+- **Prisma 7** + **PostgreSQL**
+- **JWT** + **Passport** para autenticação
+- **RabbitMQ** para o envio assíncrono de e-mails
+- **Nodemailer** + **Handlebars** para os templates de e-mail
+- **Cloudinary** para upload de imagens
+- **Swagger** para documentação
+- **Jest** + **Supertest** para os testes
+- **Biome** para lint e formatação
 
-## Project setup
+## Pré-requisitos
 
-```bash
-$ pnpm install
-```
+- Node.js 20 ou superior (desenvolvido na v24)
+- pnpm
+- PostgreSQL
+- RabbitMQ
+- Conta no Cloudinary (upload de avatar)
+- Servidor SMTP (pode ser Mailtrap, Gmail ou similar)
 
-## Compile and run the project
+Subindo o banco e a fila com Docker:
 
 ```bash
-# development
-$ pnpm run start
+docker run -d --name postgres -p 5432:5432 \
+  -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=project_tracker postgres:16
 
-# watch mode
-$ pnpm run start:dev
-
-# production mode
-$ pnpm run start:prod
+docker run -d --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3-management
 ```
 
-## Run tests
+## Instalação
 
 ```bash
-# unit tests
-$ pnpm run test
-
-# e2e tests
-$ pnpm run test:e2e
-
-# test coverage
-$ pnpm run test:cov
+git clone https://github.com/filippemelo/project-tracker-api-nestjs.git
+cd project-tracker-api-nestjs
+pnpm install
 ```
 
-## Deployment
+## Variáveis de ambiente
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+Copie o arquivo de exemplo e preencha com os seus valores:
 
 ```bash
-$ pnpm install -g @nestjs/mau
-$ mau deploy
+cp .env.example .env
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+| Variável | Descrição |
+| --- | --- |
+| `DATABASE_URL` | String de conexão do PostgreSQL |
+| `SECRET_KEY` | Chave usada para assinar os tokens JWT |
+| `SMTP_HOST` | Host do servidor SMTP |
+| `SMTP_PORT` | Porta do servidor SMTP |
+| `SMTP_USER` | Usuário do SMTP |
+| `SMTP_PASS` | Senha do SMTP |
+| `RABBITMQ_URL` | URL de conexão do RabbitMQ (ex: `amqp://guest:guest@localhost:5672`) |
+| `CLOUDINARY_CLOUD_NAME` | Nome da cloud no Cloudinary |
+| `CLOUDINARY_API_KEY` | API key do Cloudinary |
+| `CLOUDINARY_API_SECRET` | API secret do Cloudinary |
+| `PORT` | Porta da API (opcional, padrão `3000`) |
 
-## Observability
+## Banco de dados
 
-In production applications, observability is essential for understanding how your system behaves, detecting issues early, and maintaining reliable performance.
+```bash
+pnpm prisma generate     # gera o client em src/generated/prisma
+pnpm prisma migrate dev  # aplica as migrations
+```
 
-[NestJS Observe](https://observe.nestjs.com) automatically instruments your NestJS application, giving you deep visibility into your system with minimal setup:
+## Executando
 
-- **Distributed tracing:** Follow requests across services and understand how they flow through your system.
-- **Waterfall analysis:** Visualize request execution and identify slow operations, bottlenecks, and unexpected delays.
-- **Performance analysis:** Analyze application performance in real time and quickly pinpoint areas that need optimization.
-- **Metrics:** Track key application and infrastructure metrics to understand system health and performance trends.
-- **Logging:** Centralize and correlate logs with traces and other telemetry to make debugging easier.
-- **Error tracking:** Detect errors quickly and investigate their root causes with the surrounding context.
-- **SLA monitoring:** Track service-level objectives and identify when your application is approaching or exceeding defined thresholds.
-- **Alarms and alerts:** Set up alerts for critical errors, performance degradation, SLA violations, and other anomalies so your team can react quickly.
+```bash
+pnpm start:dev   # desenvolvimento com watch
+pnpm start       # desenvolvimento
+pnpm build       # build de produção
+pnpm start:prod  # roda o build
+```
 
-This project is already instrumented. Create a free account at [observe.nestjs.com](https://observe.nestjs.com), add an application, and paste the generated app key and secret into the `ObserveModule.forRoot()` call in `src/app.module.ts`.
+A API sobe em `http://localhost:3000` e a documentação Swagger fica em `http://localhost:3000/api`.
 
-The free plan needs no payment details and covers 300,000 events a month. You can also browse the [live demo](https://www.observe-demo.nestjs.com/dashboard) first - the whole dashboard over a busy service's data, with nothing to install.
+## Testes
 
-## Resources
+```bash
+pnpm test       # testes unitários
+pnpm test:cov   # cobertura
+pnpm test:e2e   # testes end-to-end
+```
 
-Check out a few resources that may come in handy when working with NestJS:
+## Rotas
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Auto-instrument your application with [NestJS Observe](https://observe.nestjs.com). Distributed tracing, metrics, and logging made easy. Error tracking and performance monitoring for your NestJS applications.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+Todas as rotas usam versionamento por URI, com o prefixo `/v1`. Com exceção de `signup`, `signin`, `forgot-password` e `reset-password`, todas exigem o header `Authorization: Bearer <token>`.
 
-## Support
+### Autenticação
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+| Método | Rota | Descrição |
+| --- | --- | --- |
+| POST | `/v1/auth/signup` | Cria uma conta |
+| POST | `/v1/auth/signin` | Faz login e retorna o token |
+| GET | `/v1/auth/me` | Dados do usuário autenticado |
+| POST | `/v1/auth/forgot-password` | Envia o e-mail de redefinição |
+| POST | `/v1/auth/reset-password` | Redefine a senha com o token do e-mail |
+| PUT | `/v1/auth/change-password` | Troca a senha do usuário logado |
 
-## Stay in touch
+### Usuários
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+| Método | Rota | Descrição |
+| --- | --- | --- |
+| GET | `/v1/users` | Lista os usuários (paginado) |
+| GET | `/v1/users/:userId` | Detalha um usuário |
+| POST | `/v1/users` | Cria um usuário |
+| PUT | `/v1/users/:userId` | Atualiza um usuário |
+| DELETE | `/v1/users/:userId` | Remove um usuário |
+| POST | `/v1/users/avatar` | Faz upload do avatar |
 
-## License
+### Projetos, tarefas, comentários e colaboradores
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+| Método | Rota | Descrição |
+| --- | --- | --- |
+| GET POST | `/v1/projects` | Lista e cria projetos |
+| GET PUT DELETE | `/v1/projects/:projectId` | Detalha, atualiza e remove um projeto |
+| GET POST | `/v1/projects/:projectId/tasks` | Lista e cria tarefas |
+| GET PUT DELETE | `/v1/projects/:projectId/tasks/:taskId` | Detalha, atualiza e remove uma tarefa |
+| GET POST | `/v1/projects/:projectId/tasks/:taskId/comments` | Lista e cria comentários |
+| GET PUT DELETE | `/v1/projects/:projectId/tasks/:taskId/comments/:commentId` | Detalha, atualiza e remove um comentário |
+| GET POST | `/v1/projects/:projectId/collaborators` | Lista e adiciona colaboradores |
+| PUT DELETE | `/v1/projects/:projectId/collaborators/:userId` | Altera o papel e remove um colaborador |
+
+Os papéis de colaborador são `OWNER`, `EDITOR` e `VIEWER`.
+
+## Estrutura
+
+```
+src/
+├── common/           # guards, interceptors, decorators e serviços compartilhados
+├── generated/prisma/ # client gerado pelo Prisma
+├── modules/
+│   ├── auth/         # autenticação, JWT e recuperação de senha
+│   ├── collaborators/
+│   ├── comments/
+│   ├── mail/         # producer, consumer RabbitMQ e templates
+│   ├── projects/
+│   ├── tasks/
+│   └── users/
+├── utils/
+└── main.ts           # bootstrap, Swagger, CORS, versionamento e microserviço
+```
+
+## Como funciona o envio de e-mail
+
+A API não envia e-mail dentro do request. Ao pedir a redefinição de senha, o `MailService` publica o evento `SEND_PASSWORD_RESET` na fila `email_queue` do RabbitMQ e responde na hora. O `MailConsumer`, registrado como microserviço na mesma aplicação, consome o evento e envia o e-mail com o template Handlebars.
+
+## Licença
+
+Projeto de estudo, sem licença de uso definida.
