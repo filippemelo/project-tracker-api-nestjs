@@ -50,6 +50,7 @@ export class ProjectsService {
         description: true,
         createdAt: true,
         updatedAt: true,
+        createdById: true,
         tasks: {
           select: {
             id: true,
@@ -104,6 +105,12 @@ export class ProjectsService {
     const userId = this.requestContext.getUserId()
 
     await this.prisma.task.deleteMany({ where: { projectId: id } })
+
+    await this.prisma.projectCollaborator.deleteMany({
+      where: {
+        projectId: id,
+      },
+    })
 
     return await this.prisma.project.delete({
       where: { id, createdById: userId },
